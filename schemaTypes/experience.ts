@@ -1,4 +1,5 @@
 import { defineField, defineArrayMember, defineType } from 'sanity';
+import { formatDate } from '../utils/formatDate';
 
 export const experienceType = defineType({
   type: 'document',
@@ -28,14 +29,32 @@ export const experienceType = defineType({
       type: 'date',
       name: 'startdate',
       title: 'Start Date',
+      options: {
+        dateFormat: 'MMM YYYY'
+      },
       validation: (e) => e.required()
     }),
-    defineField({ type: 'date', name: 'enddate', title: 'End Date' })
+    defineField({
+      type: 'date',
+      name: 'enddate',
+      title: 'End Date',
+      options: {
+        dateFormat: 'MMM YYYY'
+      }
+    })
   ],
   preview: {
     select: {
       title: 'company',
-      subtitle: 'title'
+      subtitle: 'title',
+      startDate: 'startdate',
+      endDate: 'enddate'
+    },
+    prepare({ title, subtitle, startDate, endDate }) {
+      return {
+        title,
+        subtitle: `${subtitle} (${formatDate(startDate)} - ${endDate ? formatDate(endDate) : 'Present'})`
+      };
     }
   }
 });

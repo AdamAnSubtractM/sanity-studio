@@ -1,4 +1,5 @@
 import { defineField, defineArrayMember, defineType } from 'sanity';
+import { formatDate } from '../utils/formatDate';
 
 export const educationType = defineType({
   type: 'document',
@@ -28,7 +29,15 @@ export const educationType = defineType({
   ],
   preview: {
     select: {
-      title: 'title'
+      title: 'title',
+      startDate: 'startdate',
+      endDate: 'enddate'
+    },
+    prepare({ title, startDate, endDate }) {
+      return {
+        title,
+        subtitle: `${formatDate(startDate)} - ${endDate ? formatDate(endDate) : 'Present'}`
+      };
     }
   }
 });

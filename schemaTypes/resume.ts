@@ -42,11 +42,25 @@ export const resumeType = defineType({
       of: [{ type: 'reference', to: [{ type: 'experience' }] }]
     }),
     defineField({
-      type: 'reference',
+      type: 'array',
+      name: 'education',
+      title: 'Education',
+      description: 'Reference your professional education',
+      of: [{ type: 'reference', to: [{ type: 'education' }] }]
+    }),
+    defineField({
+      type: 'boolean',
+      name: 'educationEnabled',
+      title: 'Enable Education Section',
+      description: 'Toggle to show or hide the education section on your resume',
+      initialValue: false // Default to false
+    }),
+    defineField({
+      type: 'array',
       name: 'skills',
       title: 'Skills',
       description: 'Reference your skills section',
-      to: [{ type: 'skills' }]
+      of: [{ type: 'reference', to: [{ type: 'skills' }] }]
     })
   ],
   preview: {
