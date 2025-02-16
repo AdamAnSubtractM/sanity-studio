@@ -13,5 +13,6 @@ export default defineConfig({
   schema: {
     types: schemaTypes
   },
+  studioHost: 'knee-portfolio',
   useCdn: false
 });
