@@ -7,12 +7,12 @@ import { schemaTypes } from './schemaTypes';
 export default defineConfig({
   name: 'default',
   title: 'astro-cf-portfolio',
-  projectId: '0gpal1hv',
-  dataset: 'development',
+  projectId: process.env.SANITY_STUDIO_PROJECT_ID || 'missing-sanity-project-id',
+  dataset: process.env.SANITY_STUDIO_DATASET || 'development',
   plugins: [structureTool(), visionTool(), inlineSvgInput()],
   schema: {
     types: schemaTypes
   },
-  studioHost: 'knee-portfolio',
+  studioHost: process.env.SANITY_STUDIO_HOST,
   useCdn: false
 });

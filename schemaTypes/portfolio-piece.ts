@@ -76,6 +76,18 @@ export const portfolioPieceType = defineType({
         })
       ],
       validation: (Rule) => Rule.required().min(1)
+    }),
+    defineField({
+      name: 'launchUrl',
+      title: 'Launch URL',
+      type: 'url',
+      description: 'Where this project is hosted (e.g. https://…).'
+    }),
+    defineField({
+      name: 'repoUrl',
+      title: 'Repository URL',
+      type: 'url',
+      description: 'Link to the source code repo (e.g. GitHub).'
     })
   ]
 });
