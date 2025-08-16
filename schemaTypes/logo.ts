@@ -6,10 +6,13 @@ export const logoType = defineType({
   title: 'Logo',
   fields: [
     defineField({
-      type: 'inlineSvg',
       name: 'svg',
       title: 'SVG Logo',
-      description: 'Upload your logo in SVG format'
+      description: 'Upload your logo in SVG format',
+      type: 'file',
+      options: {
+        accept: '.svg'
+      }
     }),
     defineField({
       type: 'image',
