@@ -40,5 +40,7 @@ sanity-typegen.json — TypeGen config; `overloadClientMethods: false` keeps the
 
 ## Deploys
 
-- `pnpm deploy` — pushes the studio bundle to the dev-host.
-- `pnpm deploy:production` — exports dev dataset → imports into production → deploys with `.env.production`. Destructive against the production dataset (uses `--replace`); confirm with the user before running.
+Single dataset (`production`) and single Studio host (`knee-portfolio`). Local Studio and hosted Studio both edit the same content.
+
+- `pnpm deploy` — pushes the Studio bundle to `https://knee-portfolio.sanity.studio`. Required after schema changes; not needed for content edits.
+- `pnpm dataset:export` — backs up the production dataset to `./dataset-backups`. Run before risky schema/content edits.

@@ -57,7 +57,7 @@ The full set of generated document types from the schema (Resume, CoverLetter, e
 The rest of this document covers the Sanity Studio that produces this package — how to run it, edit the schema, and ship changes.
 
 - **Sanity project ID:** `0gpal1hv`
-- **Datasets:** `development` (default for local), `production`
+- **Dataset:** `production` (single source of truth — local Studio and hosted Studio both edit it)
 - **Studio host:** `knee-portfolio` (deployed at `https://knee-portfolio.sanity.studio`)
 
 ## Setup
@@ -68,13 +68,13 @@ cp .env.example .env   # fill in real values
 pnpm dev               # http://localhost:3333
 ```
 
-`.env` and `.env.production` provide `SANITY_STUDIO_PROJECT_ID`, `SANITY_STUDIO_DATASET`, and `SANITY_STUDIO_HOST` to the Studio config (see `sanity.config.ts`).
+`.env` provides `SANITY_STUDIO_PROJECT_ID`, `SANITY_STUDIO_DATASET`, and `SANITY_STUDIO_HOST` to the Studio config (see `sanity.config.ts`).
 
 ## Scripts
 
 | Script | What it does |
 |---|---|
-| `pnpm dev` | Run the Studio locally against the dataset configured in `.env` (default: `development`). |
+| `pnpm dev` | Run the Studio locally against the dataset configured in `.env` (default: `production`). |
 | `pnpm build` | Build the production bundle into `./dist`. |
 | `pnpm typecheck` | `tsc --noEmit` over the studio code. |
 | `pnpm typegen` | Extract schema → JSON, then generate `sanity.types.ts` (document types + query result types). Commit the result. |
@@ -83,13 +83,9 @@ pnpm dev               # http://localhost:3333
 | `pnpm publish:types:dry` | Same as above with `--dry-run` — validates the package without publishing. |
 | `pnpm lint` | ESLint (flat config in `eslint.config.mjs`). |
 | `pnpm format` | Prettier write + lint. |
-| `pnpm dataset:export` | Export the `development` dataset to `./dataset-backups`. |
-| `pnpm dataset:export:production` | Export the `production` dataset to `./dataset-backups`. |
-| `pnpm dataset:import:production` | Import the latest `development` export into `production` (replaces). |
-| `pnpm deploy` | Deploy the Studio to its `development`-bound host. |
-| `pnpm deploy:production` | Full prod deploy: export dev → import to prod → deploy Studio with `.env.production`. |
-| `pnpm deploy:all` | Run `deploy` then `deploy:production` back-to-back. |
-| `pnpm deploy:graphql` / `pnpm deploy:graphql:production` | Publish the GraphQL API for dev/prod. |
+| `pnpm dataset:export` | Export the `production` dataset to `./dataset-backups`. Run before risky schema or content edits. |
+| `pnpm deploy` | Deploy the Studio bundle to `https://knee-portfolio.sanity.studio`. |
+| `pnpm deploy:graphql` | Publish the GraphQL API for the production dataset. |
 
 ## Schema map
 
@@ -156,19 +152,22 @@ After publishing, bump `@adam/portfolio-sanity` in the consumer's `package.json`
 
 ## Deploy flow
 
-The "ship a content/schema change to prod" sequence:
+There is one dataset (`production`) and one Studio host. Local Studio and the hosted Studio at `knee-portfolio.sanity.studio` both edit the same content.
+
+**Editing content** — open the hosted Studio (or run `pnpm dev` locally) and publish. The next portfolio build picks up the change. No deploy step needed.
+
+**Shipping a schema change** — schema edits live in this repo, so they require a Studio bundle redeploy:
 
 ```bash
-# 1. Make schema/queries edits, run typegen, commit.
+# 1. Edit schema + queries, regenerate types, commit.
 pnpm typegen
 git add . && git commit
 
-# 2. Optional: edit content in the development dataset via `pnpm dev`.
+# 2. Optional but recommended for risky edits — back up content first.
+pnpm dataset:export
 
-# 3. Push schema + content to production.
-pnpm deploy:production
-# (= dataset:export → dataset:import:production → sanity deploy with .env.production)
+# 3. Push the new Studio bundle to the hosted host.
+pnpm deploy
 
-# Or do dev-host + prod in one step:
-pnpm deploy:all
+# 4. Publish the consumer types (see "TypeGen + JSR publishing" above).
 ```

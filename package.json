@@ -13,14 +13,9 @@
     "typegen": "pnpm run typegen:extract && sanity typegen generate",
     "publish:types": "pnpm dlx jsr publish",
     "publish:types:dry": "pnpm dlx jsr publish --dry-run --allow-dirty",
-    "dataset:export": "sanity dataset export development ./dataset-backups --overwrite",
-    "dataset:export:production": "sanity dataset export production ./dataset-backups",
-    "dataset:import:production": "sanity dataset import ./dataset-backups/development.tar.gz production --replace",
+    "dataset:export": "sanity dataset export production ./dataset-backups",
     "deploy": "sanity deploy",
     "deploy:graphql": "sanity graphql deploy",
-    "deploy:graphql:production": "dotenv -e .env.production -- sanity graphql deploy",
-    "deploy:production": "pnpm run dataset:export && pnpm run dataset:import:production && dotenv -e .env.production -- sanity deploy",
-    "deploy:all": "pnpm run deploy && pnpm run deploy:production",
     "lint": "eslint .",
     "format": "prettier --write . && pnpm run lint"
   },
@@ -38,7 +33,6 @@
   "devDependencies": {
     "@sanity/eslint-config-studio": "^6.0.0",
     "@types/react": "^19.2.14",
-    "dotenv-cli": "^11.0.0",
     "eslint": "^9.39.4",
     "prettier": "^3.8.3",
     "typescript": "^5.9.3"
