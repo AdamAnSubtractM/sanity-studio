@@ -2,7 +2,7 @@
   "name": "@adam/portfolio-sanity",
   "version": "0.1.0",
   "description": "Generated TypeScript types and GROQ queries for the portfolio Sanity studio. Consumed by the adamknee.com Astro site.",
-  "license": "UNLICENSED",
+  "license": "MIT",
   "exports": "./mod.ts",
   "publish": {
     "include": ["mod.ts", "sanity.types.ts", "queries.ts", "README.md"]
