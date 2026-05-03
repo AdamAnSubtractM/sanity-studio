@@ -1,12 +1,64 @@
-# Portfolio Sanity Studio
+# @adam/portfolio-sanity
 
-The content backend for [adamknee.com](https://adamknee.com) (Astro + Cloudflare). It owns the schema for the resume, cover letter, and portfolio gallery; the Astro site at `../portfolio` consumes it via GROQ.
+Generated TypeScript types and GROQ queries for the Sanity Studio that backs [adamknee.com](https://adamknee.com). The studio owns the schema for the resume, cover letter, and portfolio gallery; this package is the contract its consumer uses.
+
+## Installation
+
+```bash
+# JSR (recommended)
+pnpm dlx jsr add @adam/portfolio-sanity
+
+# or, with @jsr scope already configured in .npmrc:
+pnpm add @adam/portfolio-sanity
+```
+
+## Usage
+
+```ts
+import { createClient } from '@sanity/client';
+import {
+  RESUME_QUERY,
+  COVER_LETTER_QUERY,
+  PORTFOLIO_GALLERY_QUERY,
+  type RESUME_QUERY_RESULT,
+  type COVER_LETTER_QUERY_RESULT,
+  type PORTFOLIO_GALLERY_QUERY_RESULT
+} from '@adam/portfolio-sanity';
+
+const client = createClient({
+  projectId: '0gpal1hv',
+  dataset: 'production',
+  apiVersion: '2024-11-16'
+});
+
+const resume = await client.fetch<RESUME_QUERY_RESULT>(RESUME_QUERY, { slug: 'portfolio' });
+const letter = await client.fetch<COVER_LETTER_QUERY_RESULT>(COVER_LETTER_QUERY, { id });
+const gallery = await client.fetch<PORTFOLIO_GALLERY_QUERY_RESULT>(PORTFOLIO_GALLERY_QUERY, { slug: 'best-showcase' });
+```
+
+## What's in the package
+
+The published surface is six symbols — three GROQ query strings paired with three result types:
+
+| Query | Result type | Fetches |
+|---|---|---|
+| `RESUME_QUERY` | `RESUME_QUERY_RESULT` | A resume by slug, with logo / contactInfo / experience / education / skills dereferenced. |
+| `COVER_LETTER_QUERY` | `COVER_LETTER_QUERY_RESULT` | A cover letter by `_id`, with logo / contactInfo dereferenced. |
+| `PORTFOLIO_GALLERY_QUERY` | `PORTFOLIO_GALLERY_QUERY_RESULT` | A portfolio gallery by slug, with each piece's references and image asset URLs projected. |
+
+Both queries (runtime values) and types are shipped together because the result types only describe the shape produced by their paired query.
+
+The full set of generated document types from the schema (Resume, CoverLetter, etc.) lives in the package but is intentionally not re-exported from the entry point — those are studio internals, not consumer-facing.
+
+---
+
+# Studio (contributor docs)
+
+The rest of this document covers the Sanity Studio that produces this package — how to run it, edit the schema, and ship changes.
 
 - **Sanity project ID:** `0gpal1hv`
 - **Datasets:** `development` (default for local), `production`
 - **Studio host:** `knee-portfolio` (deployed at `https://knee-portfolio.sanity.studio`)
-
----
 
 ## Setup
 
@@ -18,8 +70,6 @@ pnpm dev               # http://localhost:3333
 
 `.env` and `.env.production` provide `SANITY_STUDIO_PROJECT_ID`, `SANITY_STUDIO_DATASET`, and `SANITY_STUDIO_HOST` to the Studio config (see `sanity.config.ts`).
 
----
-
 ## Scripts
 
 | Script | What it does |
@@ -29,7 +79,7 @@ pnpm dev               # http://localhost:3333
 | `pnpm typecheck` | `tsc --noEmit` over the studio code. |
 | `pnpm typegen` | Extract schema → JSON, then generate `sanity.types.ts` (document types + query result types). Commit the result. |
 | `pnpm typegen:extract` | Schema-only extract step (rarely run on its own). |
-| `pnpm publish:types` | Publish the generated types + queries to JSR as `@adam/portfolio-sanity`. Bump `version` in `jsr.json` first. Interactive auth on first run. |
+| `pnpm publish:types` | Publish the package to JSR. Bump `version` in `jsr.json` first. |
 | `pnpm publish:types:dry` | Same as above with `--dry-run` — validates the package without publishing. |
 | `pnpm lint` | ESLint (flat config in `eslint.config.mjs`). |
 | `pnpm format` | Prettier write + lint. |
@@ -40,8 +90,6 @@ pnpm dev               # http://localhost:3333
 | `pnpm deploy:production` | Full prod deploy: export dev → import to prod → deploy Studio with `.env.production`. |
 | `pnpm deploy:all` | Run `deploy` then `deploy:production` back-to-back. |
 | `pnpm deploy:graphql` / `pnpm deploy:graphql:production` | Publish the GraphQL API for dev/prod. |
-
----
 
 ## Schema map
 
@@ -65,39 +113,26 @@ Documents live in `schemaTypes/documents/`. Reusable objects in `schemaTypes/obj
 
 The custom desk structure (`structure/index.ts`) groups the document list into **Site Content**, **Building Blocks**, and **Identity**.
 
----
+## Schema ↔ consumer coupling
 
-## Coupling with the portfolio site
-
-The Astro site (`../portfolio`) reads from this Studio via three queries defined in `queries.ts` and consumed in `portfolio/src/utils/sanity.ts`:
+The Astro site that consumes this package reads from the studio via the three GROQ queries in `queries.ts`:
 
 - `RESUME_QUERY` — uses `resume.slug.current`, dereferences `logo`, `contactInfo`, `experience[]`, `education[]`, `skills[]`. Reads `educationEnabled` and `highlights`.
 - `COVER_LETTER_QUERY` — uses `coverLetter._id`, dereferences `logo` + `contactInfo`, reads every cover-letter prose field.
 - `PORTFOLIO_GALLERY_QUERY` — uses `portfolioGallery.slug.current`, dereferences `pieces[]` and (per piece) `tags[]`, projects `featuredImage.asset->url` to `featuredImageUrl` and `image.asset->url` to `imageUrl` inside each section.
 
-The portfolio consumes both the queries and the generated types via the published JSR package `@adam/portfolio-sanity` — there is **no filesystem dependency** between the repos.
-
-**Renaming or removing any field these queries touch is a breaking change for the portfolio site.** When you make schema edits:
+**Renaming or removing any field these queries touch is a breaking change for the consumer.** When you make schema edits:
 
 1. Update `queries.ts` in the same change.
 2. Run `pnpm typegen`, commit the regenerated `sanity.types.ts`.
 3. Bump `version` in `jsr.json`, then `pnpm publish:types`.
-4. In `../portfolio`, bump the dep version and `pnpm install && pnpm exec astro check` to surface any breaks.
-
----
+4. In the consumer repo, bump the `@adam/portfolio-sanity` semver and `pnpm install` to surface any breaks.
 
 ## TypeGen + JSR publishing
 
 `pnpm typegen` runs `sanity schema extract` then `sanity typegen generate`, reading the queries in `queries.ts` and producing `sanity.types.ts`.
 
-The studio's `mod.ts` re-exports both files as the public surface of the `@adam/portfolio-sanity` JSR package (config in `jsr.json`). The portfolio consumes it as:
-
-```ts
-import {
-  RESUME_QUERY,
-  type RESUME_QUERY_RESULT
-} from '@adam/portfolio-sanity';
-```
+The studio's `mod.ts` re-exports the queries plus the three query-result types as the public surface of the JSR package (manifest in `jsr.json`).
 
 `overloadClientMethods: false` is set in `sanity-typegen.json` so the generated file omits the `declare module '@sanity/client'` augmentation — JSR rejects ambient module declarations as "slow types."
 
@@ -107,21 +142,17 @@ import {
 pnpm typegen                       # regenerate sanity.types.ts
 # bump "version" in jsr.json
 pnpm publish:types:dry             # validate
-pnpm publish:types                 # interactive auth on first run; OAuth flow opens in browser
+pnpm publish:types                 # interactive auth on first run
 ```
 
-In the portfolio repo, then bump `@adam/portfolio-sanity` to the new version and `pnpm install`.
-
----
+After publishing, bump `@adam/portfolio-sanity` in the consumer's `package.json` and `pnpm install`.
 
 ## Conventions
 
 - **Validation arg name:** `(rule) => rule.required()` — lowercase, consistent across all schemas.
-- **Field naming:** camelCase (`startDate`, not `startdate`). Field renames are breaking — see *Coupling* above.
+- **Field naming:** camelCase (`startDate`, not `startdate`). Field renames are breaking — see *Schema ↔ consumer coupling* above.
 - **Folder layout:** `documents/` for document types, `objects/` for reusable inline objects, `fields/` for field-builder helpers. Keep the flat `schemaTypes/index.ts` as the only export surface.
 - **Shared helpers:** prefer `richTextField` (block-array shorthand) and `dateRangeFields` (start/end date pair) over repeating field definitions.
-
----
 
 ## Deploy flow
 
