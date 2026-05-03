@@ -1,4 +1,5 @@
 import { defineField, defineType } from 'sanity';
+import { richTextField } from '../fields/rich-text';
 
 export const skillsType = defineType({
   type: 'document',
@@ -12,13 +13,22 @@ export const skillsType = defineType({
       description: 'The title of this skills section (e.g., "Technical Skills")',
       validation: (rule) => rule.required()
     }),
-    defineField({
-      type: 'array',
+    richTextField({
       name: 'skillsContent',
       title: 'Skills Content',
       description: 'Details or categories of skills',
-      of: [{ type: 'block' }],
-      validation: (rule) => rule.required()
+      required: true
     })
-  ]
+  ],
+  preview: {
+    select: {
+      title: 'title'
+    },
+    prepare({ title }) {
+      return {
+        title,
+        subtitle: 'Skills section'
+      };
+    }
+  }
 });

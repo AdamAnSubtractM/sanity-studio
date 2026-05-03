@@ -1,4 +1,5 @@
-import { defineArrayMember, defineField, defineType } from 'sanity';
+import { defineField, defineType } from 'sanity';
+import { richTextField } from '../fields/rich-text';
 
 export const coverLetterType = defineType({
   name: 'coverLetter',
@@ -34,11 +35,9 @@ export const coverLetterType = defineType({
       description: 'The name of the company you are applying to.',
       validation: (rule) => rule.required()
     }),
-    defineField({
+    richTextField({
       name: 'companyAddress',
       title: 'Company Address',
-      type: 'array',
-      of: [defineArrayMember({ type: 'block' })],
       description: 'The address of the company (optional).'
     }),
     defineField({
@@ -48,28 +47,22 @@ export const coverLetterType = defineType({
       description: 'Salutation (e.g., Dear Hiring Manager or specific person’s name).',
       validation: (rule) => rule.required()
     }),
-    defineField({
+    richTextField({
       name: 'openingParagraph',
       title: 'Opening Paragraph',
-      type: 'array',
-      of: [defineArrayMember({ type: 'block' })],
       description: 'Introduction and why you are excited about the role.',
-      validation: (rule) => rule.required()
+      required: true
     }),
-    defineField({
+    richTextField({
       name: 'keyHighlights',
       title: 'Key Highlights',
-      type: 'array',
-      of: [defineArrayMember({ type: 'block' })],
       description: 'Key skills or achievements to highlight.'
     }),
-    defineField({
+    richTextField({
       name: 'closingParagraph',
       title: 'Closing Paragraph',
-      type: 'array',
-      of: [defineArrayMember({ type: 'block' })],
       description: 'Closing statement and call to action.',
-      validation: (rule) => rule.required()
+      required: true
     }),
     defineField({
       name: 'signOff',

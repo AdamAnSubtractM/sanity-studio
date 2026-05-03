@@ -1,5 +1,5 @@
-// ./schemas/portfolioGallery.ts
 import { defineField, defineArrayMember, defineType } from 'sanity';
+import { richTextField } from '../fields/rich-text';
 
 export const portfolioGalleryType = defineType({
   name: 'portfolioGallery',
@@ -11,20 +11,18 @@ export const portfolioGalleryType = defineType({
       title: 'Title',
       type: 'string',
       description: 'Shown on the gallery page (e.g., “Work”, “Selected Projects”).',
-      validation: (Rule) => Rule.required()
+      validation: (rule) => rule.required()
     }),
     defineField({
       name: 'slug',
       title: 'Slug',
       type: 'slug',
       options: { source: 'title', maxLength: 96 },
-      validation: (Rule) => Rule.required()
+      validation: (rule) => rule.required()
     }),
-    defineField({
+    richTextField({
       name: 'intro',
       title: 'Intro',
-      type: 'array',
-      of: [defineArrayMember({ type: 'block' })],
       description: 'Optional short intro shown above the grid.'
     }),
     defineField({
@@ -39,7 +37,7 @@ export const portfolioGalleryType = defineType({
           options: { disableNew: true }
         })
       ],
-      validation: (Rule) => Rule.required().min(1)
+      validation: (rule) => rule.required().min(1)
     }),
     defineField({
       name: 'showTagsFilter',

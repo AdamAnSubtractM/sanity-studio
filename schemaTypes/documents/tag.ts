@@ -1,4 +1,3 @@
-// schemaTypes/tag.ts
 import { defineType, defineField } from 'sanity';
 
 export const tagType = defineType({
@@ -10,14 +9,20 @@ export const tagType = defineType({
       name: 'title',
       title: 'Tag Name',
       type: 'string',
-      validation: (Rule) => Rule.required().min(1)
+      validation: (rule) => rule.required().min(1)
     }),
     defineField({
       name: 'slug',
       title: 'Slug',
       type: 'slug',
       options: { source: 'title', maxLength: 96 },
-      validation: (Rule) => Rule.required()
+      validation: (rule) => rule.required()
     })
-  ]
+  ],
+  preview: {
+    select: {
+      title: 'title',
+      subtitle: 'slug.current'
+    }
+  }
 });

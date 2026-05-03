@@ -1,4 +1,5 @@
-import { defineArrayMember, defineField, defineType } from 'sanity';
+import { defineField, defineType } from 'sanity';
+import { richTextField } from '../fields/rich-text';
 
 export const resumeType = defineType({
   type: 'document',
@@ -6,10 +7,17 @@ export const resumeType = defineType({
   title: 'Resume',
   fields: [
     defineField({
+      name: 'slug',
+      title: 'Slug',
+      type: 'slug',
+      options: { source: 'title', maxLength: 96 },
+      validation: (rule) => rule.required()
+    }),
+    defineField({
       type: 'string',
       name: 'title',
       title: 'Use Case',
-      validation: (e) => e.required()
+      validation: (rule) => rule.required()
     }),
     defineField({
       type: 'reference',
@@ -26,13 +34,11 @@ export const resumeType = defineType({
       to: [{ type: 'contactInfo' }],
       validation: (rule) => rule.required()
     }),
-    defineField({
-      type: 'array',
+    richTextField({
       name: 'highlights',
       title: 'Highlights',
       description: 'Key highlights or a summary of your professional profile',
-      of: [defineArrayMember({ type: 'block' })], // WYSIWYG editor
-      validation: (rule) => rule.required()
+      required: true
     }),
     defineField({
       type: 'array',
@@ -53,7 +59,7 @@ export const resumeType = defineType({
       name: 'educationEnabled',
       title: 'Enable Education Section',
       description: 'Toggle to show or hide the education section on your resume',
-      initialValue: false // Default to false
+      initialValue: false
     }),
     defineField({
       type: 'array',
@@ -66,6 +72,7 @@ export const resumeType = defineType({
   preview: {
     select: {
       title: 'title',
+      subtitle: 'slug.current',
       media: 'logo.svg.asset'
     }
   }

@@ -9,27 +9,27 @@ export const portfolioPieceType = defineType({
       name: 'title',
       title: 'Title',
       type: 'string',
-      validation: (Rule) => Rule.required()
+      validation: (rule) => rule.required()
     }),
     defineField({
       name: 'slug',
       title: 'Slug',
       type: 'slug',
       options: { source: 'title', maxLength: 96 },
-      validation: (Rule) => Rule.required()
+      validation: (rule) => rule.required()
     }),
     defineField({
       name: 'featuredImage',
       title: 'Featured Image',
       type: 'image',
       options: { hotspot: true },
-      validation: (Rule) => Rule.required()
+      validation: (rule) => rule.required()
     }),
     defineField({
       name: 'description',
       title: 'Description',
       type: 'text',
-      validation: (Rule) => Rule.required()
+      validation: (rule) => rule.required()
     }),
     defineField({
       name: 'tags',
@@ -41,41 +41,14 @@ export const portfolioPieceType = defineType({
           to: [{ type: 'tag' }]
         })
       ],
-      validation: (Rule) =>
-        Rule.min(1) // require at least one tag
-          .unique() // no duplicate references
+      validation: (rule) => rule.min(1).unique()
     }),
     defineField({
       name: 'sections',
       title: 'Sections',
       type: 'array',
-      of: [
-        defineArrayMember({
-          type: 'object',
-          fields: [
-            defineField({
-              name: 'heading',
-              title: 'Section Heading',
-              type: 'string',
-              validation: (Rule) => Rule.required()
-            }),
-            defineField({
-              name: 'description',
-              title: 'Section Description',
-              type: 'array',
-              of: [defineArrayMember({ type: 'block' })],
-              validation: (Rule) => Rule.required()
-            }),
-            defineField({
-              name: 'image',
-              title: 'Section Image',
-              type: 'image',
-              options: { hotspot: true }
-            })
-          ]
-        })
-      ],
-      validation: (Rule) => Rule.required().min(1)
+      of: [defineArrayMember({ type: 'portfolioSection' })],
+      validation: (rule) => rule.required().min(1)
     }),
     defineField({
       name: 'launchUrl',
@@ -89,5 +62,12 @@ export const portfolioPieceType = defineType({
       type: 'url',
       description: 'Link to the source code repo (e.g. GitHub).'
     })
-  ]
+  ],
+  preview: {
+    select: {
+      title: 'title',
+      subtitle: 'description',
+      media: 'featuredImage'
+    }
+  }
 });

@@ -25,6 +25,9 @@
 # Typescript
 *.tsbuildinfo
 
+# TypeGen intermediary (sanity.types.ts is committed; schema.json is not)
+/schema.json
+
 # Dotenv and similar local-only files
 *.local
 *.env*

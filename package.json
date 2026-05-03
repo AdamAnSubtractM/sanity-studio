@@ -1,5 +1,5 @@
 {
-  "name": "astro-cf-portfolio",
+  "name": "portfolio-sanity-studio",
   "private": true,
   "version": "1.0.0",
   "main": "package.json",
@@ -8,6 +8,11 @@
     "dev": "sanity dev",
     "start": "sanity start",
     "build": "sanity build",
+    "typecheck": "tsc --noEmit",
+    "typegen:extract": "sanity schema extract --path=./schema.json",
+    "typegen": "pnpm run typegen:extract && sanity typegen generate",
+    "publish:types": "pnpm dlx jsr publish",
+    "publish:types:dry": "pnpm dlx jsr publish --dry-run",
     "dataset:export": "sanity dataset export development ./dataset-backups --overwrite",
     "dataset:export:production": "sanity dataset export production ./dataset-backups",
     "dataset:import:production": "sanity dataset import ./dataset-backups/development.tar.gz production --replace",
@@ -16,26 +21,27 @@
     "deploy:graphql:production": "dotenv -e .env.production -- sanity graphql deploy",
     "deploy:production": "pnpm run dataset:export && pnpm run dataset:import:production && dotenv -e .env.production -- sanity deploy",
     "deploy:all": "pnpm run deploy && pnpm run deploy:production",
-    "lint": "eslint",
+    "lint": "eslint .",
     "format": "prettier --write . && pnpm run lint"
   },
   "keywords": [
     "sanity"
   ],
   "dependencies": {
-    "@sanity/vision": "^4.14.2",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
-    "sanity": "^4.14.2",
-    "styled-components": "^6.1.15"
+    "@sanity/vision": "^5.23.0",
+    "groq": "^5.23.0",
+    "react": "^19.2.5",
+    "react-dom": "^19.2.5",
+    "sanity": "^5.23.0",
+    "styled-components": "^6.4.1"
   },
   "devDependencies": {
-    "@sanity/eslint-config-studio": "^4.0.0",
-    "@types/react": "^18.3.18",
-    "dotenv-cli": "^8.0.0",
-    "eslint": "^8.57.1",
-    "prettier": "^3.5.1",
-    "typescript": "^5.7.3"
+    "@sanity/eslint-config-studio": "^6.0.0",
+    "@types/react": "^19.2.14",
+    "dotenv-cli": "^11.0.0",
+    "eslint": "^9.39.4",
+    "prettier": "^3.8.3",
+    "typescript": "^5.9.3"
   },
   "pnpm": {
     "onlyBuiltDependencies": [

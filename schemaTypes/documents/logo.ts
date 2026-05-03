@@ -24,8 +24,8 @@ export const logoType = defineType({
       }
     })
   ],
-  validation: (Rule) =>
-    Rule.custom((fields) => {
+  validation: (rule) =>
+    rule.custom((fields) => {
       if (!fields?.svg && !fields?.png) {
         return 'You must provide at least one logo (SVG or PNG)';
       }

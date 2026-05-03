@@ -1,16 +1,18 @@
-import { logoType } from './logo';
-import { experienceType } from './experience';
-import { educationType } from './education';
-import { skillsType } from './skills';
-import { contactInfoType } from './contact-info';
-import { socialType } from './socials';
-import { resumeType } from './resume';
-import { coverLetterType } from './cover-letter';
-import { portfolioGalleryType } from './portfolio-gallery';
-import { portfolioPieceType } from './portfolio-piece';
-import { tagType } from './tag';
+import { contactInfoType } from './documents/contact-info';
+import { coverLetterType } from './documents/cover-letter';
+import { educationType } from './documents/education';
+import { experienceType } from './documents/experience';
+import { logoType } from './documents/logo';
+import { portfolioGalleryType } from './documents/portfolio-gallery';
+import { portfolioPieceType } from './documents/portfolio-piece';
+import { resumeType } from './documents/resume';
+import { skillsType } from './documents/skills';
+import { socialType } from './documents/socials';
+import { tagType } from './documents/tag';
+import { portfolioSectionType } from './objects/portfolio-section';
 
 export const schemaTypes = [
+  // Documents
   coverLetterType,
   resumeType,
   logoType,
@@ -21,5 +23,7 @@ export const schemaTypes = [
   socialType,
   portfolioGalleryType,
   portfolioPieceType,
-  tagType
+  tagType,
+  // Objects
+  portfolioSectionType
 ];
