@@ -8,5 +8,13 @@ export default defineCliConfig({
   deployment: {
     autoUpdates: true
   },
-  studioHost: process.env.SANITY_STUDIO_HOST
+  studioHost: process.env.SANITY_STUDIO_HOST,
+  // `overloadClientMethods: false` keeps sanity.types.ts free of client module
+  // augmentation, which is what makes it publishable to JSR.
+  typegen: {
+    path: './**/*.{ts,tsx,js,jsx}',
+    schema: './schema.json',
+    generates: './sanity.types.ts',
+    overloadClientMethods: false
+  }
 });

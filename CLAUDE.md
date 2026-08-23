@@ -28,7 +28,7 @@ queries.ts        — groq-tagged queries; sole input to TypeGen's query-result 
 sanity.types.ts   — generated; do not edit by hand
 mod.ts            — JSR package entry point; documented re-exports of queries + the 3 query-result types only (schema document types stay internal)
 jsr.json          — JSR manifest (name, version, exports, file include list)
-sanity-typegen.json — TypeGen config; `overloadClientMethods: false` keeps the output JSR-publishable
+sanity.cli.ts     — CLI + TypeGen config; `overloadClientMethods: false` keeps the output JSR-publishable
 ```
 
 ## Style
