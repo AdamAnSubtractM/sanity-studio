@@ -6,7 +6,8 @@ export default defineCliConfig({
     dataset: process.env.SANITY_STUDIO_DATASET || 'production'
   },
   deployment: {
-    autoUpdates: true
+    autoUpdates: true,
+    appId: 'pfnae1abx6l9fa7vn38he9tu'
   },
   studioHost: process.env.SANITY_STUDIO_HOST,
   // `overloadClientMethods: false` keeps sanity.types.ts free of client module
