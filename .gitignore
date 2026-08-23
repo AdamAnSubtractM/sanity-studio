@@ -31,4 +31,5 @@
 # Dotenv and similar local-only files
 *.local
 *.env*
-./dataset-backups/*
+!.env.example
+/dataset-backups/
