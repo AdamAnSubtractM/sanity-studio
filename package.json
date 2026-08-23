@@ -25,16 +25,16 @@
   "dependencies": {
     "@sanity/vision": "^5.23.0",
     "groq": "^5.23.0",
-    "react": "^19.2.5",
-    "react-dom": "^19.2.5",
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8",
     "sanity": "^5.23.0",
-    "styled-components": "^6.4.1"
+    "styled-components": "^6.5.3"
   },
   "devDependencies": {
     "@sanity/eslint-config-studio": "^6.0.0",
-    "@types/react": "^19.2.14",
+    "@types/react": "^19.2.18",
     "eslint": "^9.39.4",
-    "prettier": "^3.8.3",
+    "prettier": "^3.9.6",
     "typescript": "^5.9.3"
   },
   "pnpm": {
